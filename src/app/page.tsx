@@ -208,7 +208,7 @@ export default function Dashboard() {
         uniqueCountries={uniqueCountries}
       />
       <main className="dashboard-content">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 justify-items-center items-center">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 justify-items-center items-center">
           <PieChart pieData={pieData} pieOptions={pieOptions} imvCounts={imvCounts} />
           <SocialMediaPieChart
             socialMediaData={socialMediaData}
