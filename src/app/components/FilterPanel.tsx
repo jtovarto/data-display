@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Transition } from "@headlessui/react";
+import mockData from "../../mockData.json";
 
 interface FilterPanelProps {
   filters: {
@@ -17,18 +18,16 @@ interface FilterPanelProps {
     }>
   >;
   ageRanges: { label: string; min: number; max: number }[];
-  uniqueGenders: string[];
-  uniqueCities: string[];
-  uniqueCountries: string[];
 }
+
+const uniqueGenders = Array.from(new Set(mockData.map((item) => item.gen)));
+const uniqueCities = Array.from(new Set(mockData.map((item) => item.ct)));
+const uniqueCountries = Array.from(new Set(mockData.map((item) => item.co)));
 
 export default function FilterPanel({
   filters,
   setFilters,
   ageRanges,
-  uniqueGenders,
-  uniqueCities,
-  uniqueCountries,
 }: FilterPanelProps) {
   const [isPanelVisible, setIsPanelVisible] = useState(false);
 
@@ -79,7 +78,6 @@ export default function FilterPanel({
         leave="transition-all duration-300 ease-in-out"
         leaveFrom="transform scale-y-100 opacity-100"
         leaveTo="transform scale-y-0 opacity-0"
-        className="origin-top"
       >
         <div>
           <div className="flex flex-row gap-4 flex-wrap">

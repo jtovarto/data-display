@@ -1,5 +1,5 @@
 "use client";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import mockData from "../mockData.json";
 import "chart.js/auto";
 import "./globals.css";
@@ -74,10 +74,6 @@ export default function Dashboard() {
 
   const { hpsCounts, hpsData, hpsOptions } = useHPS(filteredData);
 
-  const uniqueGenders = Array.from(new Set(mockData.map((item) => item.gen)));
-  const uniqueCities = Array.from(new Set(mockData.map((item) => item.ct)));
-  const uniqueCountries = Array.from(new Set(mockData.map((item) => item.co)));
-
   return (
     <div className="dashboard-container">
       <header className="dashboard-header">
@@ -89,9 +85,6 @@ export default function Dashboard() {
         filters={filters}
         setFilters={setFilters}
         ageRanges={ageRanges}
-        uniqueGenders={uniqueGenders}
-        uniqueCities={uniqueCities}
-        uniqueCountries={uniqueCountries}
       />
       <main className="dashboard-content mt-16 md:mt-48">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 justify-items-center items-center">
