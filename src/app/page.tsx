@@ -4,11 +4,13 @@ import mockData from "../mockData.json";
 import "chart.js/auto";
 import "./globals.css";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
-import { VenezuelaFuture } from "@/types";
 import FilterPanel from "./components/FilterPanel";
 import PieChart from "./components/PieChart";
 import SocialMediaPieChart from "./components/SocialMediaPieChart";
 import HpsPieChart from "./components/HpsPieChart";
+import { useIMV } from "./hooks/useIMV";
+import { useSocialMedia } from "./hooks/useSocialMedia";
+import { useHPS } from "./hooks/useHPS";
 ChartJS.register(ArcElement, Tooltip, Legend);
 
 const ageRanges = [
@@ -18,20 +20,6 @@ const ageRanges = [
   { label: "Adulto (36-59)", min: 36, max: 59 },
   { label: "Mayor (60+)", min: 60, max: Infinity },
 ];
-
-type PieOptionType = {
-  plugins: {
-    tooltip: {
-      callbacks: {
-        label: (context: {
-          dataset: { data: number[] };
-          raw: number;
-          label: string;
-        }) => string;
-      };
-    };
-  };
-};
 
 export default function Dashboard() {
   const [filters, setFilters] = useState({
@@ -80,113 +68,11 @@ export default function Dashboard() {
     });
   });
 
-  const keys = Object.keys(VenezuelaFuture);
-  const imvCounts = useMemo(() => {
-    return filteredData.reduce((acc: Record<string, number>, item) => {
-      acc[keys[item.imv + 3]] = (acc[keys[item.imv + 3]] || 0) + 1;
-      return acc;
-    }, {} as Record<string, number>);
-  }, [filteredData, keys]);
+  const { imvCounts, ivmData, ivmOptions } = useIMV(filteredData);
+  const { socialMediaData, socialMediaOptions, socialMediaCounts } =
+    useSocialMedia(filteredData);
 
-  const pieData = {
-    labels: Object.keys(imvCounts),
-    datasets: [
-      {
-        data: Object.values(imvCounts) as number[],
-        backgroundColor: ["#FF6384", "#36A2EB", "#FFCE56", "#4BC0C0"],
-        hoverOffset: 4,
-      },
-    ],
-  };
-
-  const pieOptions: PieOptionType = {
-    plugins: {
-      tooltip: {
-        callbacks: {
-          label: function (tooltipItem) {
-            const total = tooltipItem.dataset.data.reduce(
-              (sum, value) => sum + (typeof value === "number" ? value : 0),
-              0
-            );
-            const rawValue =
-              typeof tooltipItem.raw === "number" ? tooltipItem.raw : 0;
-            const percentage = ((rawValue / total) * 100).toFixed(2);
-            return `${tooltipItem.label}: ${rawValue} (${percentage}%)`;
-          },
-        },
-      },
-    },
-  };
-
-  const snCounts = useMemo(() => {
-    return mockData.reduce((acc, item) => {
-      acc[item.sn] = (acc[item.sn] || 0) + 1;
-      return acc;
-    }, {});
-  }, []);
-
-  const socialMediaData = {
-    labels: Object.keys(snCounts),
-    datasets: [
-      {
-        data: Object.values(snCounts),
-        backgroundColor: ["#FF6384", "#36A2EB", "#FFCE56", "#4BC0C0", "#9966FF"],
-        hoverOffset: 4,
-      },
-    ],
-  };
-
-  const socialMediaOptions = {
-    plugins: {
-      tooltip: {
-        callbacks: {
-          label: function (context) {
-            const total = context.dataset.data.reduce(
-              (sum, value) => sum + value,
-              0
-            );
-            const percentage = ((context.raw / total) * 100).toFixed(2);
-            return `${context.label}: ${context.raw} (${percentage}%)`;
-          },
-        },
-      },
-    },
-  };
-
-  const hpsCounts = useMemo(() => {
-    return mockData.reduce((acc, item) => {
-      acc[item.hps] = (acc[item.hps] || 0) + 1;
-      return acc;
-    }, {});
-  }, []);
-
-  const hpsData = {
-    labels: Object.keys(hpsCounts),
-    datasets: [
-      {
-        data: Object.values(hpsCounts),
-        backgroundColor: ["#FF6384", "#36A2EB", "#FFCE56", "#4BC0C0", "#9966FF"],
-        hoverOffset: 4,
-      },
-    ],
-  };
-
-  const hpsOptions = {
-    plugins: {
-      tooltip: {
-        callbacks: {
-          label: function (context) {
-            const total = context.dataset.data.reduce(
-              (sum, value) => sum + value,
-              0
-            );
-            const percentage = ((context.raw / total) * 100).toFixed(2);
-            return `${context.label}: ${context.raw} (${percentage}%)`;
-          },
-        },
-      },
-    },
-  };
+  const { hpsCounts, hpsData, hpsOptions } = useHPS(filteredData);
 
   const uniqueGenders = Array.from(new Set(mockData.map((item) => item.gen)));
   const uniqueCities = Array.from(new Set(mockData.map((item) => item.ct)));
@@ -209,11 +95,15 @@ export default function Dashboard() {
       />
       <main className="dashboard-content mt-16 md:mt-48">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 justify-items-center items-center">
-          <PieChart pieData={pieData} pieOptions={pieOptions} imvCounts={imvCounts} />
+          <PieChart
+            pieData={ivmData}
+            pieOptions={ivmOptions}
+            imvCounts={imvCounts}
+          />
           <SocialMediaPieChart
             socialMediaData={socialMediaData}
             socialMediaOptions={socialMediaOptions}
-            snCounts={snCounts}
+            snCounts={socialMediaCounts}
           />
           <HpsPieChart
             hpsData={hpsData}
