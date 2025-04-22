@@ -10,7 +10,7 @@ interface HpsPieChartProps {
 
 export default function HpsPieChart({ hpsData, hpsOptions, hpsCounts }: HpsPieChartProps) {
   return (
-    <div className="w-full md:w-1/2">
+    <div className="w-full md:w-1/2 bg-white border border-gray-300 rounded-lg px-4 py-8">
       {Object.values(hpsCounts).length === 0 ? (
         <p className="text-center text-gray-500">
           No hay registros para mostrar en el gráfico.
