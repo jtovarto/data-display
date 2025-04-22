@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import mockData from "../mockData.json";
 import { Pie } from "react-chartjs-2";
 import "chart.js/auto";
@@ -7,6 +7,14 @@ import "./globals.css";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 import { VenezuelaFuture } from "@/types";
 ChartJS.register(ArcElement, Tooltip, Legend);
+
+const ageRanges = [
+  { label: "Infantil (0-12)", min: 0, max: 12 },
+  { label: "Adolescente (13-17)", min: 13, max: 17 },
+  { label: "Joven (18-35)", min: 18, max: 35 },
+  { label: "Adulto (36-59)", min: 36, max: 59 },
+  { label: "Mayor (60+)", min: 60, max: Infinity },
+];
 
 export default function Dashboard() {
   const [filters, setFilters] = useState({
@@ -19,6 +27,7 @@ export default function Dashboard() {
     sn: "",
     imv: "",
     hps: "",
+    ageRange: null,
   });
 
   const handleFilterChange = (e) => {
@@ -26,9 +35,20 @@ export default function Dashboard() {
     setFilters({ ...filters, [name]: value });
   };
 
+  const handleAgeRangeChange = (e) => {
+    const selectedRange = ageRanges.find(
+      (range) => range.label === e.target.value
+    );
+    setFilters({ ...filters, ageRange: selectedRange });
+  };
+
   const filteredData = mockData.filter((item) => {
     return Object.keys(filters).every((key) => {
       if (!filters[key]) return true;
+      if (key === "ageRange") {
+        const { min, max } = filters[key];
+        return item.age >= min && item.age <= max;
+      }
       return item[key]
         .toString()
         .toLowerCase()
@@ -37,10 +57,12 @@ export default function Dashboard() {
   });
 
   const keys = Object.keys(VenezuelaFuture);
-  const imvCounts = filteredData.reduce((acc, item) => {
-    acc[keys[item.imv + 3]] = (acc[item.imv] || 0) + 1;
-    return acc;
-  }, {});
+  const imvCounts = useMemo(() => {
+    return filteredData.reduce((acc, item) => {
+      acc[keys[item.imv + 3]] = (acc[keys[item.imv + 3]] || 0) + 1;
+      return acc;
+    }, {});
+  }, [filteredData]);
 
   console.log({ imvCounts, keys });
 
@@ -73,31 +95,87 @@ export default function Dashboard() {
   };
 
   const uniqueGenders = Array.from(new Set(mockData.map((item) => item.gen)));
+  const uniqueCities = Array.from(new Set(mockData.map((item) => item.ct)));
+  const uniqueCountries = Array.from(new Set(mockData.map((item) => item.co)));
 
   const handleGenderChange = (e) => {
     setFilters({ ...filters, gen: e.target.value });
   };
 
+  const handleCityChange = (e) => {
+    setFilters({ ...filters, ct: e.target.value });
+  };
+
+  const handleCountryChange = (e) => {
+    setFilters({ ...filters, co: e.target.value });
+  };
+
   return (
     <div className="dashboard-container">
       <header className="dashboard-header">
-        <h1>Dashboard</h1>
+        <h1 className="text-4xl font-extrabold text-center text-gray-800 mb-6">Dashboard</h1>
       </header>
       <div className="dashboard-filters">
-        <h2>Filter by Gender</h2>
-        <select onChange={handleGenderChange} value={filters.gen}>
-          <option value="">Todos</option>
-          {uniqueGenders.map((gender) => (
-            <option key={gender} value={gender}>
-              {gender === 'M' ? 'Masculino' : 'Femenino'}
-            </option>
-          ))}
-        </select>
+        <h2 className="text-xl font-bold mb-4">Panel de Filtros</h2>
+        <div className="flex flex-row gap-4 flex-wrap">
+          <div>
+            <h3>Edad</h3>
+            <select onChange={handleAgeRangeChange}>
+              <option value="">Todos</option>
+              {ageRanges.map((range) => (
+                <option key={range.label} value={range.label}>
+                  {range.label}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div>
+            <h3>Género</h3>
+            <select onChange={handleGenderChange} value={filters.gen}>
+              <option value="">Todos</option>
+              {uniqueGenders.map((gender) => (
+                <option key={gender} value={gender}>
+                  {gender === "M" ? "Masculino" : "Femenino"}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div>
+            <h3>Ciudad</h3>
+            <select onChange={handleCityChange} value={filters.ct}>
+              <option value="">Todos</option>
+              {uniqueCities.map((city) => (
+                <option key={city} value={city}>
+                  {city}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div>
+            <h3>País</h3>
+            <select onChange={handleCountryChange} value={filters.co}>
+              <option value="">Todos</option>
+              {uniqueCountries.map((country) => (
+                <option key={country} value={country}>
+                  {country}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
       </div>
       <main className="dashboard-content">
-        <div style={{ width: "50%", margin: "0 auto" }}>
+        <div className="flex flex-col items-center justify-center gap-4">
           <h2>Venezuela Future Distribution</h2>
-          <Pie data={pieData} options={pieOptions} />
+          <div className="w-full md:w-1/2">
+            {Object.values(imvCounts).length === 0 ? (
+              <p className="text-center text-gray-500">
+                No hay registros para mostrar en el gráfico.
+              </p>
+            ) : (
+              <Pie data={pieData} options={pieOptions} />
+            )}
+          </div>
         </div>
       </main>
     </div>
