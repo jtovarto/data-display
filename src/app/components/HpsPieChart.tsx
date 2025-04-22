@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React from 'react';
 import { Pie } from 'react-chartjs-2';
 import { ChartData, ChartOptions } from 'chart.js';
@@ -18,7 +19,7 @@ export default function HpsPieChart({ hpsData, hpsOptions, hpsCounts }: HpsPieCh
       ) : (
         <>
           <h2 className="text-center text-xl font-bold mb-4">Distribución de HPS</h2>
-          <Pie data={hpsData} options={hpsOptions} />
+          <Pie data={hpsData as any} options={hpsOptions as any} />
         </>
       )}
     </div>

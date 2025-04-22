@@ -1,10 +1,10 @@
 import React from "react";
 import { Pie } from "react-chartjs-2";
-import { ChartData, ChartOptions } from "chart.js";
+import { ChartData } from "chart.js";
 
 interface PieChartProps {
   pieData: ChartData<"pie">;
-  pieOptions: ChartOptions<"pie">;
+  pieOptions: Record<string, unknown>;
   imvCounts: Record<string, number>;
 }
 

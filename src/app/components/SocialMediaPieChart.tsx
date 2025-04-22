@@ -1,10 +1,11 @@
-import React from 'react';
-import { Pie } from 'react-chartjs-2';
-import { ChartData, ChartOptions } from 'chart.js';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import React from "react";
+import { Pie } from "react-chartjs-2";
+import { ChartData } from "chart.js";
 
 interface SocialMediaPieChartProps {
   socialMediaData: ChartData;
-  socialMediaOptions: ChartOptions;
+  socialMediaOptions: unknown;
   snCounts: Record<string, number>;
 }
 
@@ -21,8 +22,10 @@ export default function SocialMediaPieChart({
         </p>
       ) : (
         <>
-          <h2 className="text-center text-xl font-bold mb-4">Redes Sociales Preferidas</h2>
-          <Pie data={socialMediaData} options={socialMediaOptions} />
+          <h2 className="text-center text-xl font-bold mb-4">
+            Redes Sociales Preferidas
+          </h2>
+          <Pie data={socialMediaData as any} options={socialMediaOptions as any} />
         </>
       )}
     </div>

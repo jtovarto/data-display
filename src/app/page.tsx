@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import { useState } from "react";
 import mockData from "../mockData.json";
@@ -86,7 +87,7 @@ export default function Dashboard() {
       </header>
       <FilterPanel
         filters={filters}
-        setFilters={setFilters}
+        setFilters={setFilters as any}
         ageRanges={ageRanges}
       />
       <main className="dashboard-content mt-16 md:mt-48">
@@ -145,7 +146,7 @@ export default function Dashboard() {
           {showHpsChart && (
             <HpsPieChart
               hpsData={hpsData}
-              hpsOptions={hpsOptions}
+              hpsOptions={hpsOptions as any}
               hpsCounts={hpsCounts}
             />
           )}
