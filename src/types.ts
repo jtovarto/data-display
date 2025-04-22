@@ -8,6 +8,7 @@ export interface MockData {
   gen: 'M' | 'F'; // Gender
   sn: string; // Social network
   imv: VenezuelaFuture; // How they imagine Venezuela in 6 months
+  hps: HappinessLevel; // Current happiness state of the user
 }
 
 export enum VenezuelaFuture {
@@ -15,4 +16,11 @@ export enum VenezuelaFuture {
   Pessimistic = 2,
   Neutral = 3,
   Uncertain = 4
+}
+
+export enum HappinessLevel {
+  VeryUnhappy = 1,
+  Unhappy = 2,
+  Neutral = 3,
+  Happy = 4
 }
