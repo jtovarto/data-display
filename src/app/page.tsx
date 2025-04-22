@@ -22,6 +22,9 @@ const ageRanges = [
 ];
 
 export default function Dashboard() {
+  const [showPieChart, setShowPieChart] = useState(true);
+  const [showSocialChart, setShowSocialChart] = useState(true);
+  const [showHpsChart, setShowHpsChart] = useState(true);
   const [filters, setFilters] = useState({
     fn: "",
     ln: "",
@@ -87,22 +90,65 @@ export default function Dashboard() {
         ageRanges={ageRanges}
       />
       <main className="dashboard-content mt-16 md:mt-48">
+        <div className="bg-white p-2 border border-gray-300 rounded-lg mb-8 w-full md:w-[85%] flex flex-col  gap-8 mx-auto">
+          <div className="flex flex-row justify-between border-b-1 border-gray-300 p-4 text-3xl">
+            <p className="text-gray-700 text-sm md:text-3xl ">
+              1. ¿Cómo imagina usted a Venezuela en los próximos 6 meses?
+            </p>
+            <button
+              onClick={() => setShowPieChart((prev) => !prev)}
+              className="bg-blue-500 text-white py-0 px-2 rounded-lg text-sm"
+            >
+              {showPieChart ? "Hide" : "Show"}
+            </button>
+          </div>
+          <div className="flex flex-row justify-between border-b-1 border-gray-300 p-4 text-3xl">
+            <p className="text-gray-700 text-sm md:text-3xl">
+              2. ¿Cuál es la red social que usted utiliza con mayor frecuencia?
+            </p>
+            <button
+              onClick={() => setShowSocialChart((prev) => !prev)}
+              className="bg-blue-500 text-white py-0 px-2 rounded-lg text-sm"
+            >
+              {showSocialChart ? "Hide" : "Show"}
+            </button>
+          </div>
+          <div className="flex flex-row justify-between  p-4 text-3xl">
+            <p className="text-gray-700 text-sm md:text-3xl ">
+              3. ¿Si usted fuese Presidente de la República, cuál sería el
+              problema que atendería con la mayor urgencia?
+            </p>
+
+            <button
+              onClick={() => setShowHpsChart((prev) => !prev)}
+              className="bg-blue-500 text-white py-0 px-2 rounded-lg text-sm"
+            >
+              {showHpsChart ? "Hide" : "Show"}
+            </button>
+          </div>
+        </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 justify-items-center items-center">
-          <PieChart
-            pieData={ivmData}
-            pieOptions={ivmOptions}
-            imvCounts={imvCounts}
-          />
-          <SocialMediaPieChart
-            socialMediaData={socialMediaData}
-            socialMediaOptions={socialMediaOptions}
-            snCounts={socialMediaCounts}
-          />
-          <HpsPieChart
-            hpsData={hpsData}
-            hpsOptions={hpsOptions}
-            hpsCounts={hpsCounts}
-          />
+          {showPieChart && (
+            <PieChart
+              pieData={ivmData}
+              pieOptions={ivmOptions}
+              imvCounts={imvCounts}
+            />
+          )}
+          {showSocialChart && (
+            <SocialMediaPieChart
+              socialMediaData={socialMediaData}
+              socialMediaOptions={socialMediaOptions}
+              snCounts={socialMediaCounts}
+            />
+          )}
+          {showHpsChart && (
+            <HpsPieChart
+              hpsData={hpsData}
+              hpsOptions={hpsOptions}
+              hpsCounts={hpsCounts}
+            />
+          )}
         </div>
       </main>
     </div>
