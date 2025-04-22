@@ -1,6 +1,6 @@
-import React from 'react';
-import { Pie } from 'react-chartjs-2';
-import { ChartData, ChartOptions } from 'chart.js';
+import React from "react";
+import { Pie } from "react-chartjs-2";
+import { ChartData, ChartOptions } from "chart.js";
 
 interface PieChartProps {
   pieData: ChartData<"pie">;
@@ -8,7 +8,11 @@ interface PieChartProps {
   imvCounts: Record<string, number>;
 }
 
-export default function PieChart({ pieData, pieOptions, imvCounts }: PieChartProps) {
+export default function PieChart({
+  pieData,
+  pieOptions,
+  imvCounts,
+}: PieChartProps) {
   return (
     <div className="w-full md:w-1/2">
       {Object.values(imvCounts).length === 0 ? (
@@ -16,7 +20,12 @@ export default function PieChart({ pieData, pieOptions, imvCounts }: PieChartPro
           No hay registros para mostrar en el gráfico.
         </p>
       ) : (
-        <Pie data={pieData} options={{ ...pieOptions, scales: undefined }} />
+        <>
+          <h2 className="text-center text-xl font-bold mb-4">
+            Venezuela Future Distribution
+          </h2>
+          <Pie data={pieData} options={{ ...pieOptions, scales: undefined }} />
+        </>
       )}
     </div>
   );
